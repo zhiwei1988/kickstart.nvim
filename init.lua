@@ -605,7 +605,23 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
+        clangd = {
+          cmd = {
+            'clangd',
+            -- 启用后台索引功能。这允许 clangd 在后台持续索引你的项目，提高后续操作的响应速度。
+            '--background-index',
+            -- 启用 clang-tidy 集成。Clang-Tidy 是一个 C++ 代码分析工具，可以检查代码风格、编程错误和增强代码可读性。
+            '--clang-tidy',
+            -- 设置代码补全的样式为"详细"模式。这会在代码补全时提供更多的信息，如函数参数、返回类型等。
+            '--completion-style=detailed',
+            -- 设置头文件插入策略为 "Include What You Use" (IWYU)。这有助于优化头文件的包含，只包含必要的头文件。jk
+            '--header-insertion=iwyu',
+            -- 启用缺失头文件的建议功能。当你使用了某个未包含头文件中定义的符号时，clangd 会建议你添加相应的 #include 语句。
+            '--suggest-missing-includes',
+          },
+          filetypes = { 'c', 'cc', 'cpp', 'objc', 'objcpp' },
+          root_dir = require('lspconfig.util').root_pattern('compile_commands.json', 'compile_flags.txt', '.git'),
+        },
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
