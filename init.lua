@@ -163,6 +163,7 @@ vim.opt.scrolloff = 10
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+vim.keymap.set('i', 'jk', '<Esc><C-k>', { desc = 'Exit Insert Mode' })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -660,7 +661,10 @@ require('lazy').setup({
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
+      -- vim.tbl_keys() 是一个 Neovim API 函数,用于获取表(table)的所有键(keys)。
       local ensure_installed = vim.tbl_keys(servers or {})
+      -- vim.list_extend() 是一个 Neovim API 函数,用于扩展列表。
+      -- 这行代码将 'stylua' 添加到 ensure_installed 列表中。
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
       })
@@ -668,6 +672,8 @@ require('lazy').setup({
 
       require('mason-lspconfig').setup {
         handlers = {
+          -- 调用 require('mason-lspconfig').setup() 时，插件会遍历所有已安装或配置的 LSP 服务器。
+          -- server_name 的值是由 mason-lspconfig 插件提供的
           function(server_name)
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
