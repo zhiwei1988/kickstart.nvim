@@ -406,7 +406,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      -- 默认搜索当前缓冲区或指定文件，适合快速在当前文件中查找特定字符串
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+      -- 可以搜索整个项目目录或指定目录，适合在整个项目中进行更复杂的搜索
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
@@ -504,6 +506,7 @@ require('lazy').setup({
           -- NOTE: Remember that Lua is a real programming language, and as such it is possible
           -- to define small helper and utility functions so you don't have to repeat yourself.
           --
+          -- 创建函数，可以方便地执行快捷键映射
           -- In this case, we create a function that lets us more easily define mappings specific
           -- for LSP related items. It sets the mode, buffer and description for us each time.
           local map = function(keys, func, desc, mode)
@@ -623,6 +626,23 @@ require('lazy').setup({
           filetypes = { 'c', 'cc', 'cpp', 'objc', 'objcpp' },
           root_dir = require('lspconfig.util').root_pattern('compile_commands.json', 'compile_flags.txt', '.git'),
         },
+        neocmake = {
+          cmd = { 'neocmakelsp', '--stdio' },
+          filetypes = { 'cmake' },
+          root_dir = function(fname)
+            return require('lspconfig.util').find_git_ancestor(fname)
+          end,
+          single_file_support = true, -- suggested
+          init_options = {
+            format = {
+              enable = true,
+            },
+            lint = {
+              enable = true,
+            },
+            scan_cmake_in_package = true, -- default is true
+          },
+        },
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
@@ -667,6 +687,8 @@ require('lazy').setup({
       -- 这行代码将 'stylua' 添加到 ensure_installed 列表中。
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'codelldb', -- Used to code debug
+        'neocmakelsp', -- Used to auto complete cmake
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -910,7 +932,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'cpp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -939,7 +961,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
