@@ -7,7 +7,7 @@ local function open_terminal()
   -- 创建一个新的水平分屏
   vim.cmd 'split'
   -- 调整新分屏的高度为10行
-  vim.cmd 'resize 10'
+  vim.cmd 'resize 20'
   -- 在新分屏中打开终端
   vim.cmd 'terminal'
   -- 进入插入模式,以便立即可以在终端中输入命令
