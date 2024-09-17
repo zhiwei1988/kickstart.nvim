@@ -1,7 +1,5 @@
 -- keymaps.lua
 
-local M = {}
-
 -- 定义一个函数来打开分屏终端
 local function open_terminal()
   -- 创建一个新的水平分屏
@@ -14,10 +12,10 @@ local function open_terminal()
   vim.cmd 'startinsert'
 end
 
-function M.setup()
+local M = {
   -- 定义你的快捷键
-  vim.keymap.set('n', '<leader>tt', open_terminal, { desc = 'Open terminal', noremap = true, silent = true })
-  vim.keymap.set('i', 'jk', '<Esc><C-k>', { desc = 'Exit Insert Mode' })
-end
+  vim.keymap.set('n', '<leader>tt', open_terminal, { desc = 'Open terminal', noremap = true, silent = true }),
+  vim.keymap.set('i', 'jk', '<Esc><C-k>', { desc = 'Exit Insert Mode' }),
+}
 
 return M
