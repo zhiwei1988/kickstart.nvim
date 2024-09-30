@@ -688,6 +688,7 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'codelldb', -- Used to code debug
         'neocmakelsp', -- Used to auto complete cmake
+        'clang-format', -- Used to format C/C++ code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -742,6 +743,8 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        c = { 'clang-format', lsp_format = 'fallback' },
+        cpp = { 'clang-format', lsp_format = 'fallback' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
