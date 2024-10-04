@@ -16,6 +16,7 @@ local M = {
   -- 定义你的快捷键
   vim.keymap.set('n', '<leader>tt', open_terminal, { desc = 'Open terminal', noremap = true, silent = true }),
   vim.keymap.set('i', 'jk', '<Esc><C-k>', { desc = 'Exit Insert Mode' }),
+  vim.keymap.set('n', '<leader>x', '<cmd>bd<CR>', { desc = 'Del Current Buffer' }),
 }
 
 return M
