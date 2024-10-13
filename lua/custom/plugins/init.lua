@@ -11,4 +11,19 @@ vim.opt.shiftwidth = 4
 -- 使用空格替换Tab
 vim.opt.expandtab = true
 
+-- 设置系统剪切板工具
+if vim.fn.executable 'clipboard-provider' then
+  vim.g.clipboard = {
+    name = 'myClipboard',
+    copy = {
+      ['+'] = 'clipboard-provider copy',
+      ['*'] = 'env COPY_PROVIDERS=tmux clipboard-provider copy',
+    },
+    paste = {
+      ['+'] = 'clipboard-provider paste',
+      ['*'] = 'env COPY_PROVIDERS=tmux clipboard-provider paste',
+    },
+  }
+end
+
 return {}
