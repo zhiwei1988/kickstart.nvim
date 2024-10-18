@@ -26,4 +26,11 @@ if vim.fn.executable 'clipboard-provider' then
   }
 end
 
+-- 使用 treesitter 进行折叠
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+
+-- 默认不折叠
+vim.wo.foldlevel = 99
+
 return {}
