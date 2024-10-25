@@ -12,6 +12,7 @@ return {
     },
 
     current_line_blame_opts = {
+      -- blame 信息显示延迟（毫秒）
       delay = 1000,
     },
 
@@ -20,7 +21,6 @@ return {
 
     -- blame 信息格式
     current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
-    -- blame 信息显示延迟（毫秒）
 
     -- 设置预览窗口的位置
     preview_config = {
