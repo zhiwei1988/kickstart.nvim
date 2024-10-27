@@ -33,4 +33,11 @@ vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
 -- 默认不折叠
 vim.wo.foldlevel = 99
 
+-- 设置内部编码为 utf-8
+vim.opt.encoding = 'utf-8'
+-- 设置文件编码为 utf-8
+vim.opt.fileencoding = 'utf-8'
+-- 设置自动检测的编码列表
+vim.opt.fileencodings = 'utf-8,gb2312'
+
 return {}
