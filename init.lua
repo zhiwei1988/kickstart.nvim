@@ -615,6 +615,8 @@ require('lazy').setup({
             'clangd',
             -- 启用后台索引功能。这允许 clangd 在后台持续索引你的项目，提高后续操作的响应速度。
             '--background-index',
+            -- 预编译头文件存储在内存中，而不是磁盘上。这可以提高索引速度，但可能会占用更多内存。
+            '--pch-storage=memory',
             -- 启用 clang-tidy 集成。Clang-Tidy 是一个 C++ 代码分析工具，可以检查代码风格、编程错误和增强代码可读性。
             '--clang-tidy',
             -- 设置代码补全的样式为"详细"模式。这会在代码补全时提供更多的信息，如函数参数、返回类型等。
@@ -727,7 +729,7 @@ require('lazy').setup({
     },
     opts = {
       notify_on_error = false,
-      format_on_save = function(bufnr)
+      --[[ format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
@@ -752,7 +754,7 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
-      },
+      }, ]]
     },
   },
 
