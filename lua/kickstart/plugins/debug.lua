@@ -18,9 +18,10 @@ return {
     -- Required dependency for nvim-dap-ui
     'nvim-neotest/nvim-nio',
 
-    -- Installs the debug adapters for you
-    'williamboman/mason.nvim',
-    'jay-babu/mason-nvim-dap.nvim',
+    -- 注释掉自动安装调试适配器的依赖
+    -- 如果需要使用调试功能，请确保已经手动安装了对应的调试适配器
+    -- 'williamboman/mason.nvim',
+    -- 'jay-babu/mason-nvim-dap.nvim',
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
@@ -52,23 +53,51 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
-    require('mason-nvim-dap').setup {
-      -- Makes a best effort to setup the various debuggers with
-      -- reasonable debug configurations
-      automatic_installation = true,
+    -- 注释掉 mason-nvim-dap 自动安装设置
+    -- 现在需要手动安装和配置调试适配器
+    -- require('mason-nvim-dap').setup {
+    --   automatic_installation = true,
+    --   handlers = {},
+    --   ensure_installed = {
+    --     'codelldb',
+    --   },
+    -- }
 
-      -- You can provide additional configuration to the handlers,
-      -- see mason-nvim-dap README for more information
-      handlers = {},
-
-      -- You'll need to check that you have the required things installed
-      -- online, please don't ask me how to install them :)
-      ensure_installed = {
-        -- Update this to ensure that you have the debuggers for the langs you want
-        -- 'delve',
-        'codelldb',
+    -- 手动配置调试适配器
+    -- 对于 C/C++ 调试，需要安装 codelldb
+    -- 安装方法：
+    -- 1. 下载 codelldb 从 https://github.com/vadimcn/vscode-lldb/releases
+    -- 2. 解压到合适的目录
+    -- 3. 确保 codelldb 可执行文件在 PATH 中，或者在下面的配置中指定完整路径
+    
+    -- 配置 codelldb 适配器（用于 C/C++/Rust 调试）
+    dap.adapters.codelldb = {
+      type = 'server',
+      port = '${port}',
+      executable = {
+        -- 如果 codelldb 不在 PATH 中，请指定完整路径
+        -- 例如：command = '/path/to/codelldb/extension/adapter/codelldb',
+        command = 'codelldb',
+        args = { '--port', '${port}' },
       },
     }
+
+    -- 配置 C/C++ 调试
+    dap.configurations.c = {
+      {
+        name = 'Launch file',
+        type = 'codelldb',
+        request = 'launch',
+        program = function()
+          return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        cwd = '${workspaceFolder}',
+        stopOnEntry = false,
+      },
+    }
+    
+    -- C++ 使用相同的配置
+    dap.configurations.cpp = dap.configurations.c
 
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
@@ -97,6 +126,8 @@ return {
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
     -- Install golang specific config
+    -- 如果你需要 Go 调试功能，请确保已安装 delve 调试器
+    -- 安装方法：go install github.com/go-delve/delve/cmd/dlv@latest
     -- require('dap-go').setup {
     --   delve = {
     --     -- On Windows delve must be run attached or it crashes.

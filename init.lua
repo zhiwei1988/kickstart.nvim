@@ -457,10 +457,11 @@ require('lazy').setup({
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
-      -- Automatically install LSPs and related tools to stdpath for Neovim
-      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
-      'williamboman/mason-lspconfig.nvim',
-      'WhoIsSethDaniel/mason-tool-installer.nvim',
+      -- NOTE: Mason plugins removed due to compatibility issues with lower Neovim versions
+      -- If you have a newer Neovim version, you can uncomment the following:
+      -- { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
+      -- 'williamboman/mason-lspconfig.nvim',
+      -- 'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -674,42 +675,35 @@ require('lazy').setup({
         },
       }
 
-      -- Ensure the servers and tools above are installed
-      --  To check the current status of installed tools and/or manually install
-      --  other tools, you can run
-      --    :Mason
+      -- NOTE: Mason setup removed due to compatibility issues with lower Neovim versions
+      -- Manual LSP server installation required. Please install the following tools manually:
+      --   - clangd (for C/C++)
+      --   - lua-language-server (for Lua)
+      --   - neocmakelsp (for CMake)
+      --   - stylua (for Lua formatting)
+      --   - codelldb (for debugging)
+      --   - clang-format (for C/C++ formatting)
       --
-      --  You can press `g?` for help in this menu.
-      require('mason').setup()
+      -- If you have a newer Neovim version with Mason support, you can uncomment:
+      -- require('mason').setup()
+      -- local ensure_installed = vim.tbl_keys(servers or {})
+      -- vim.list_extend(ensure_installed, {
+      --   'stylua', -- Used to format Lua code
+      --   'codelldb', -- Used to code debug
+      --   'neocmakelsp', -- Used to auto complete cmake
+      --   'clang-format', -- Used to format C/C++ code
+      -- })
+      -- require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      -- You can add other tools here that you want Mason to install
-      -- for you, so that they are available from within Neovim.
-      -- vim.tbl_keys() 是一个 Neovim API 函数,用于获取表(table)的所有键(keys)。
-      local ensure_installed = vim.tbl_keys(servers or {})
-      -- vim.list_extend() 是一个 Neovim API 函数,用于扩展列表。
-      -- 这行代码将 'stylua' 添加到 ensure_installed 列表中。
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-        'codelldb', -- Used to code debug
-        'neocmakelsp', -- Used to auto complete cmake
-        'clang-format', -- Used to format C/C++ code
-      })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
-      require('mason-lspconfig').setup {
-        handlers = {
-          -- 调用 require('mason-lspconfig').setup() 时，插件会遍历所有已安装或配置的 LSP 服务器。
-          -- server_name 的值是由 mason-lspconfig 插件提供的
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for tsserver)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
-      }
+      -- Direct LSP server setup (替代 mason-lspconfig handlers)
+      -- 直接设置每个 LSP 服务器，不依赖 mason-lspconfig
+      for server_name, server_config in pairs(servers) do
+        -- This handles overriding only values explicitly passed
+        -- by the server configuration above. Useful when disabling
+        -- certain features of an LSP (for example, turning off formatting for tsserver)
+        server_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities or {})
+        require('lspconfig')[server_name].setup(server_config)
+      end
     end,
   },
 
