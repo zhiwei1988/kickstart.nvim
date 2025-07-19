@@ -17,6 +17,7 @@ local M = {
   vim.keymap.set('n', '<leader>tt', open_terminal, { desc = 'Open terminal', noremap = true, silent = true }),
   vim.keymap.set('i', 'jk', '<Esc><C-k>', { desc = 'Exit Insert Mode' }),
   vim.keymap.set('n', '<leader>x', '<cmd>bd<CR>', { desc = 'Del Current Buffer' }),
+  vim.keymap.set('n', '<space><space>x', '<cmd>source %<CR>', { desc = 'reload current cfg' }),
 }
 
 return M
