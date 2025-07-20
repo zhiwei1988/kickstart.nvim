@@ -38,5 +38,29 @@ vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
 -- 设置自动检测的编码列表
 vim.opt.fileencodings = 'utf-8,gb2312'
+hello
+
+-- 自动保存设置
+vim.opt.autowrite = true     -- 在切换缓冲区时自动保存
+vim.opt.autowriteall = true  -- 在更多情况下自动保存
+
+-- 设置自动保存延时为 3 秒
+local autosave_timer = nil
+
+local function autosave()
+  if vim.bo.modified and not vim.bo.readonly and vim.fn.expand("%") ~= "" and vim.bo.buftype == "" then
+    vim.cmd("silent write")
+  end
+end
+
+-- 自动保存事件，带 3 秒延时
+vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+  callback = function()
+    if autosave_timer then
+      autosave_timer:stop()
+    end
+    autosave_timer = vim.defer_fn(autosave, 3000)  -- 3 秒延时
+  end,
+})
 
 return {}
