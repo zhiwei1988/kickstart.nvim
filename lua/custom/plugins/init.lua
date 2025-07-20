@@ -11,12 +11,7 @@ vim.opt.shiftwidth = 4
 -- 使用空格替换Tab
 vim.opt.expandtab = true
 
--- 检查系统类型
-local os_name = vim.uv.os_uname().sysname:lower()
-
--- 设置系统剪切板工具
--- 只在非 macOS 系统下设置剪切板工具
-if os_name ~= 'darwin' and vim.fn.executable 'clipboard-provider' then
+if vim.fn.executable 'clipboard-provider' then
   vim.g.clipboard = {
     name = 'myClipboard',
     copy = {
