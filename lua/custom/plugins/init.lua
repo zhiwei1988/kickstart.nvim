@@ -38,7 +38,6 @@ vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
 -- 设置自动检测的编码列表
 vim.opt.fileencodings = 'utf-8,gb2312'
-hello
 
 -- 自动保存设置
 vim.opt.autowrite = true     -- 在切换缓冲区时自动保存
