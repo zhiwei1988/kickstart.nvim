@@ -11,19 +11,32 @@ vim.opt.shiftwidth = 4
 -- 使用空格替换Tab
 vim.opt.expandtab = true
 
-if vim.fn.executable 'clipboard-provider' then
-  vim.g.clipboard = {
-    name = 'myClipboard',
-    copy = {
-      ['+'] = 'clipboard-provider copy',
-      ['*'] = 'env COPY_PROVIDERS=tmux clipboard-provider copy',
-    },
-    paste = {
-      ['+'] = 'clipboard-provider paste',
-      ['*'] = 'env COPY_PROVIDERS=tmux clipboard-provider paste',
-    },
-  }
+-- 智能剪贴板配置：根据环境自动选择合适的剪贴板提供程序
+local function setup_clipboard()
+  -- 检查是否通过 SSH 连接
+  local is_ssh = vim.env.SSH_CLIENT ~= nil or vim.env.SSH_TTY ~= nil or vim.env.SSH_CONNECTION ~= nil
+
+  -- 如果有 clipboard-provider 且在 SSH 环境中，使用自定义剪贴板
+  if vim.fn.executable 'clipboard-provider' == 1 and is_ssh then
+    vim.g.clipboard = {
+      name = 'myClipboard',
+      copy = {
+        ['+'] = 'clipboard-provider copy',
+        ['*'] = 'env COPY_PROVIDERS=tmux clipboard-provider copy',
+      },
+      paste = {
+        ['+'] = 'clipboard-provider paste',
+        ['*'] = 'env COPY_PROVIDERS=tmux clipboard-provider paste',
+      },
+    }
+  else
+    -- 在本地环境或没有 clipboard-provider 时，使用系统默认剪贴板
+    -- 这会让 Neovim 使用系统原生的剪贴板（在 init.lua 中已通过 vim.opt.clipboard = 'unnamedplus' 设置）
+    vim.g.clipboard = nil
+  end
 end
+
+setup_clipboard()
 
 -- 使用 treesitter 进行折叠
 vim.wo.foldmethod = 'expr'
