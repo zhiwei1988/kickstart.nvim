@@ -71,7 +71,7 @@ vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
     if autosave_timer then
       autosave_timer:stop()
     end
-    autosave_timer = vim.defer_fn(autosave, 3000)  -- 3 秒延时
+    autosave_timer = vim.defer_fn(autosave, 1500)  -- 1.5 秒延时
   end,
 })
 

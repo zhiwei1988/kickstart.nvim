@@ -648,7 +648,31 @@ require('lazy').setup({
         },
         -- gopls = {},
         -- pyright = {},
-        -- rust_analyzer = {},
+        rust_analyzer = {
+          settings = {
+            ['rust-analyzer'] = {
+              cargo = {
+                allFeatures = true, -- 启用所有 Cargo 特性
+                loadOutDirsFromCheck = true, -- 从 `cargo check` 加载 `out-dirs`
+                runBuildScripts = true, -- 运行构建脚本
+              },
+              -- 为 Rust 添加 clippy 提示。
+              checkOnSave = {
+                allFeatures = true, -- 检查时启用所有特性
+                command = 'clippy', -- 保存时使用 clippy 进行检查
+                extraArgs = { '--no-deps' }, -- 传递给 clippy 的额外参数，不检查依赖项
+              },
+              procMacro = {
+                enable = true, -- 启用过程宏支持
+                ignored = {
+                  ['async-trait'] = { 'async_trait' },
+                  ['napi-derive'] = { 'napi' },
+                  ['async-recursion'] = { 'async_recursion' },
+                },
+              },
+            },
+          },
+        },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
