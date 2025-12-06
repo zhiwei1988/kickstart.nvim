@@ -443,6 +443,17 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+        -- 放入你的 init.lua 或快捷键配置中
+      vim.keymap.set('n', '<leader>fw', function()
+        builtin.live_grep({
+        -- 将搜索范围限制为当前文件的绝对路径
+        search_dirs = { vim.fn.expand("%:p") },
+        -- 注入 ripgrep 的 -w 参数 (全词匹配)
+        additional_args = function() return { "-w" } end,
+        prompt_title = "Current Buffer (Whole Word)",
+        })
+      end, { desc = "Search Whole Word in Current Buffer" })
     end,
   },
 
