@@ -11,6 +11,7 @@ vim.opt.shiftwidth = 4
 -- 使用空格替换Tab
 vim.opt.expandtab = true
 
+--[[
 -- 智能剪贴板配置：根据环境自动选择合适的剪贴板提供程序
 local function setup_clipboard()
   -- 检查是否通过 SSH 连接
@@ -37,6 +38,19 @@ local function setup_clipboard()
 end
 
 setup_clipboard()
+--]]
+
+vim.g.clipboard = {
+  name = 'OSC 52',
+  copy = {
+    ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+    ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+  },
+  paste = {
+    ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+    ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+  },
+}
 
 -- 使用 treesitter 进行折叠
 vim.wo.foldmethod = 'expr'
