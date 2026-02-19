@@ -126,6 +126,7 @@ return {
         diff_buf_win_enter = function(bufnr, winid, ctx)
           -- 进入 diff 缓冲区窗口时调用
           -- 可以设置窗口特定的选项
+          vim.opt_local.scrollbind = true -- 强制同步滚动
           if ctx.layout_name:match('^diff2') then
             if ctx.symbol == 'a' then
               vim.opt_local.winhl = table.concat({
