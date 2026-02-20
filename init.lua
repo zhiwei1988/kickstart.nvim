@@ -444,16 +444,18 @@ require('lazy').setup({
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
 
-        -- 放入你的 init.lua 或快捷键配置中
+      -- 放入你的 init.lua 或快捷键配置中
       vim.keymap.set('n', '<leader>fw', function()
-        builtin.live_grep({
-        -- 将搜索范围限制为当前文件的绝对路径
-        search_dirs = { vim.fn.expand("%:p") },
-        -- 注入 ripgrep 的 -w 参数 (全词匹配)
-        additional_args = function() return { "-w" } end,
-        prompt_title = "Current Buffer (Whole Word)",
-        })
-      end, { desc = "Search Whole Word in Current Buffer" })
+        builtin.live_grep {
+          -- 将搜索范围限制为当前文件的绝对路径
+          search_dirs = { vim.fn.expand '%:p' },
+          -- 注入 ripgrep 的 -w 参数 (全词匹配)
+          additional_args = function()
+            return { '-w' }
+          end,
+          prompt_title = 'Current Buffer (Whole Word)',
+        }
+      end, { desc = 'Search Whole Word in Current Buffer' })
     end,
   },
 
@@ -735,6 +737,8 @@ require('lazy').setup({
         'codelldb', -- Used to code debug
         'neocmakelsp', -- Used to auto complete cmake
         'clang-format', -- Used to format C/C++ code
+        'ts_ls', -- Used to ts/js lsp server
+        'prettier', --  Used to format ts/js code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -787,16 +791,19 @@ require('lazy').setup({
           lsp_format = lsp_format_opt,
         }
       end,
+      --]]
       formatters_by_ft = {
         lua = { 'stylua' },
         c = { 'clang-format', lsp_format = 'fallback' },
         cpp = { 'clang-format', lsp_format = 'fallback' },
+        javascript = { 'prettier', lsp_format = 'fallback' },
+        typescript = { 'prettier', lsp_format = 'fallback' },
+        javascriptreact = { 'prettier', lsp_format = 'fallback' },
+        typescriptreact = { 'prettier', lsp_format = 'fallback' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
-        --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
-      }, ]]
+      },
     },
   },
 
