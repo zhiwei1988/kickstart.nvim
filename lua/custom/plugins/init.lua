@@ -40,6 +40,10 @@ end
 setup_clipboard()
 --]]
 
+
+local is_ssh = vim.env.SSH_CLIENT ~= nil or vim.env.SSH_TTY ~= nil or vim.env.SSH_CONNECTION ~= nil
+
+if is_ssh then
 vim.g.clipboard = {
   name = 'OSC 52',
   copy = {
@@ -51,6 +55,7 @@ vim.g.clipboard = {
     ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
   },
 }
+end
 
 -- 使用 treesitter 进行折叠
 vim.wo.foldmethod = 'expr'
