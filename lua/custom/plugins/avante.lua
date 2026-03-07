@@ -8,9 +8,9 @@ return {
     -- mode = "legacy",
     mode = "agentic",
     provider = 'gemini',
-    auto_suggestions_provider = 'gemini',
+    auto_suggestions_provider = 'gemini_flash_lite',
     behaviour = {
-      auto_suggestions = true,
+      auto_suggestions = false,
     },
     gemini = {
       endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
@@ -20,6 +20,20 @@ return {
       max_tokens = 4096,
     },
     vendors = {
+      gemini_flash_lite = {
+        endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
+        model = 'gemini-3.1-flash-lite-preview',
+        timeout = 30000,
+        temperature = 0,
+        max_tokens = 4096,
+        api_key_name = 'GEMINI_API_KEY',
+        parse_curl_args = function(provider, code_opts)
+          return require('avante.providers.gemini').parse_curl_args(provider, code_opts)
+        end,
+        parse_response_data = function(data_stream, event_state, opts)
+          return require('avante.providers.gemini').parse_response(data_stream, event_state, opts)
+        end,
+      },
       gemini_pro = {
         endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
         model = 'gemini-3.1-pro-preview',
