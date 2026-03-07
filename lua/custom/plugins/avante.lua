@@ -7,30 +7,45 @@ return {
     -- add any opts here
     -- mode = "legacy",
     mode = "agentic",
-    provider = 'gemini_pro',
-    auto_suggestions_provider = 'gemini_flash',
+    provider = 'gemini',
+    auto_suggestions_provider = 'gemini',
     behaviour = {
       auto_suggestions = true,
     },
-    providers = {
+    gemini = {
+      endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
+      model = 'gemini-3-flash-preview',
+      timeout = 30000,
+      temperature = 0,
+      max_tokens = 4096,
+    },
+    vendors = {
       gemini_pro = {
-        __inherited_from = 'gemini',
         endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
-        model = 'gemini-3-pro-preview',
+        model = 'gemini-3.1-pro-preview',
         timeout = 30000,
         temperature = 0,
-        max_tokens = 4096,
+        max_tokens = 8192,
         api_key_name = 'GEMINI_API_KEY',
+        parse_curl_args = function(provider, code_opts)
+          return require('avante.providers.gemini').parse_curl_args(provider, code_opts)
+        end,
+        parse_response_data = function(data_stream, event_state, opts)
+          return require('avante.providers.gemini').parse_response(data_stream, event_state, opts)
+        end,
       },
-      gemini_flash = {
-        __inherited_from = 'gemini',
-        endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
-        model = 'gemini-3-flash-preview',
-        timeout = 30000,
-        temperature = 0,
-        max_tokens = 2048,
-        api_key_name = 'GEMINI_API_KEY',
-      },
+    },
+  },
+  keys = {
+    {
+      '<leader>ap',
+      function() require('avante.api').switch_provider('gemini_pro') end,
+      desc = 'Avante: switch to gemini pro',
+    },
+    {
+      '<leader>af',
+      function() require('avante.api').switch_provider('gemini') end,
+      desc = 'Avante: switch to gemini flash',
     },
   },
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
