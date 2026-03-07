@@ -12,14 +12,14 @@ return {
     behaviour = {
       auto_suggestions = false,
     },
-    gemini = {
-      endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
-      model = 'gemini-3-flash-preview',
-      timeout = 30000,
-      temperature = 0,
-      max_tokens = 4096,
-    },
-    vendors = {
+    providers = {
+      gemini = {
+        endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
+        model = 'gemini-3-flash-preview',
+        timeout = 30000,
+        temperature = 0,
+        max_tokens = 4096,
+      },
       gemini_flash_lite = {
         endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
         model = 'gemini-3.1-flash-lite-preview',
