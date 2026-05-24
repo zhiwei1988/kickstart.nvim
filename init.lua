@@ -737,9 +737,14 @@ require('lazy').setup({
         'codelldb', -- Used to code debug
         'neocmakelsp', -- Used to auto complete cmake
         'clang-format', -- Used to format C/C++ code
-        'ts_ls', -- Used to ts/js lsp server
-        'prettier', --  Used to format ts/js code
       })
+      -- 依赖 npm 的工具，只有检测到 npm 才加入安装列表，避免无 node 环境时反复报错
+      if vim.fn.executable 'npm' == 1 then
+        vim.list_extend(ensure_installed, {
+          'ts_ls', -- Used to ts/js lsp server
+          'prettier', --  Used to format ts/js code
+        })
+      end
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
