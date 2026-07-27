@@ -90,12 +90,14 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- 设置内部编码为 utf-8
+-- 设置内部编码为 utf-8（nvim 内存表示，固定不可改）
 vim.opt.encoding = 'utf-8'
--- 设置文件编码为 utf-8
-vim.opt.fileencoding = 'utf-8'
--- 设置自动检测的编码列表
-vim.opt.fileencodings = 'utf-8,gb2312'
+-- 注意：不要全局设置 vim.opt.fileencoding。它代表“当前 buffer 已采用的编码”，
+-- 设成 'utf-8' 会强制把 GBK 文件按 utf-8 读/写，导致中文乱码并静默改写文件编码。
+-- 编码探测应交给 fileencodings 自动完成。
+-- 顺序：有 BOM 的先认 BOM；无 BOM 时 utf-8 优先（真 UTF-8 文件中文字节对通常不满足
+-- UTF-8 前导字节模式，会拒收而回退 gbk），最后 gb18030 兜底（GBK 超集）。
+vim.opt.fileencodings = 'ucs-bom,utf-8,gbk,gb2312,gb18030'
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -342,7 +344,7 @@ require('lazy').setup({
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
-    branch = '*',
+    version = '*',
     dependencies = {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
