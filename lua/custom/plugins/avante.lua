@@ -4,62 +4,40 @@ return {
   lazy = false,
   version = false, -- set this if you want to always pull the latest change
   opts = {
-    -- add any opts here
-    -- mode = "legacy",
-    mode = "agentic",
-    provider = 'gemini',
-    auto_suggestions_provider = 'gemini_flash_lite',
+    mode = 'agentic',
+    provider = 'deepseek',
+    auto_suggestions_provider = 'deepseek_flash',
     behaviour = {
-      auto_suggestions = false,
+      auto_suggestions = true,
     },
     providers = {
-      gemini = {
-        endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
-        model = 'gemini-3-flash-preview',
-        timeout = 30000,
-        temperature = 0,
-        max_tokens = 4096,
+      -- 主对话 / agent：DeepSeek V4 Pro + Thinking（API 默认 effort=high）
+      -- 注：avante openai 路径会剥离非 o1 模型的 reasoning_effort，故不显式传；
+      --     DeepSeek 官方默认 thinking=enabled、effort=high，与需求一致。
+      deepseek = {
+        __inherited_from = 'openai',
+        endpoint = 'https://api.deepseek.com',
+        api_key_name = 'DEEPSEEK_API_KEY',
+        model = 'deepseek-v4-pro',
+        timeout = 120000,
+        extra_request_body = {
+          max_tokens = 16384,
+          thinking = { type = 'enabled' },
+        },
       },
-      gemini_flash_lite = {
-        endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
-        model = 'gemini-3.1-flash-lite-preview',
-        timeout = 30000,
-        temperature = 0,
-        max_tokens = 4096,
-        api_key_name = 'GEMINI_API_KEY',
-        parse_curl_args = function(provider, code_opts)
-          return require('avante.providers.gemini').parse_curl_args(provider, code_opts)
-        end,
-        parse_response_data = function(data_stream, event_state, opts)
-          return require('avante.providers.gemini').parse_response(data_stream, event_state, opts)
-        end,
+      -- 自动补全：Flash + Non-Thinking，低延迟短输出
+      deepseek_flash = {
+        __inherited_from = 'openai',
+        endpoint = 'https://api.deepseek.com',
+        api_key_name = 'DEEPSEEK_API_KEY',
+        model = 'deepseek-v4-flash',
+        timeout = 8000,
+        extra_request_body = {
+          temperature = 0,
+          max_tokens = 512,
+          thinking = { type = 'disabled' },
+        },
       },
-      gemini_pro = {
-        endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
-        model = 'gemini-3.1-pro-preview',
-        timeout = 30000,
-        temperature = 0,
-        max_tokens = 8192,
-        api_key_name = 'GEMINI_API_KEY',
-        parse_curl_args = function(provider, code_opts)
-          return require('avante.providers.gemini').parse_curl_args(provider, code_opts)
-        end,
-        parse_response_data = function(data_stream, event_state, opts)
-          return require('avante.providers.gemini').parse_response(data_stream, event_state, opts)
-        end,
-      },
-    },
-  },
-  keys = {
-    {
-      '<leader>ap',
-      function() require('avante.api').switch_provider('gemini_pro') end,
-      desc = 'Avante: switch to gemini pro',
-    },
-    {
-      '<leader>af',
-      function() require('avante.api').switch_provider('gemini') end,
-      desc = 'Avante: switch to gemini flash',
     },
   },
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
