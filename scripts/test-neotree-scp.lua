@@ -52,20 +52,19 @@ assert_eq('upload file parent', scp.remote_upload_dir('/a/b/c.txt', false), '/a/
 assert_eq('quote plain', scp.quote 'hello', '"hello"')
 assert_eq('quote win trail', scp.quote 'C:\\foo\\', '"C:\\foo\\\\"')
 
--- download
--- Downloads 以 \ 结尾，quote 会再补 \，避免 "...\Downloads\" 吃掉收尾引号
+-- download（PowerShell: $env:USERPROFILE）
 local dl_file = scp.build_download_cmd('zhiwei@dev', '/home/z/a.txt', false)
 assert_eq(
   'download file',
   dl_file,
-  'scp "zhiwei@dev:/home/z/a.txt" "%USERPROFILE%\\Downloads\\\\"'
+  'scp "zhiwei@dev:/home/z/a.txt" "$env:USERPROFILE\\Downloads"'
 )
 
 local dl_dir = scp.build_download_cmd('zhiwei@dev', '/home/z/proj', true)
 assert_eq(
   'download dir',
   dl_dir,
-  'scp -r "zhiwei@dev:/home/z/proj" "%USERPROFILE%\\Downloads\\\\"'
+  'scp -r "zhiwei@dev:/home/z/proj" "$env:USERPROFILE\\Downloads"'
 )
 
 -- upload

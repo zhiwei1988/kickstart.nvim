@@ -1,10 +1,12 @@
 -- neo-tree 远程 scp 命令生成（本机 Windows OpenSSH 粘贴执行）
--- gY: 远程 → %USERPROFILE%\Downloads\
+-- gY: 远程 → 本机 Downloads（PowerShell 展开 $env:USERPROFILE）
 -- gU: 本机路径 → 远程光标目录
 
 local M = {}
 
-M.WINDOWS_DOWNLOAD_DIR = '%USERPROFILE%\\Downloads\\'
+-- PowerShell 可展开；勿用 %USERPROFILE%（PowerShell 不展开，scp 会当字面路径）
+-- 不要以 \ 结尾，避免 "...\Downloads\" 吃掉收尾引号
+M.WINDOWS_DOWNLOAD_DIR = '$env:USERPROFILE\\Downloads'
 
 --- 读取固定配置的 user@host；未配置返回 nil
 function M.get_target()
