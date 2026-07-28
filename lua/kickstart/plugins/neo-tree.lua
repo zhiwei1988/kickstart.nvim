@@ -14,7 +14,11 @@ return {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
   },
   opts = {
+    -- monorepo：git status 只算当前 neo-tree 显示路径，避免全仓扫描
+    git_status_scope_to_path = true,
     filesystem = {
+      -- 用 OS 级文件监视自动刷新目录树与 git 状态（外部改动可跟上）
+      use_libuv_file_watcher = true,
       window = {
         mappings = {
           ['\\'] = 'close_window',
