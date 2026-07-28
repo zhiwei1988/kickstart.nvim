@@ -83,6 +83,6 @@ init.lua
   ├── Formatting: conform.nvim (triggered by <leader>f or format-on-save)
   └── Treesitter: nvim-treesitter (highlight, indent, fold expressions)
 
-custom/plugins/lualine.lua depends on harpoon.lua (reads harpoon list for tabline display)
+custom/plugins/bufferline.lua owns the tabline (open buffers); lualine keeps the statusline only
 custom/plugins/avante.lua depends on render-markdown.lua (renders AI response as markdown)
 ```
