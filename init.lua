@@ -656,9 +656,16 @@ require('lazy').setup({
             '--header-insertion=iwyu',
             -- 启用缺失头文件的建议功能。当你使用了某个未包含头文件中定义的符号时，clangd 会建议你添加相应的 #include 语句。
             '--suggest-missing-includes',
+            -- 交叉编译器白名单: 让 clangd 调用真实 gcc 探测内置宏与系统 include (aarch64/arm/x86 等)。
+            -- 白名单由 scripts/gen_lsp_compdb.sh 扫描 compile_commands.json 动态生成, 换产品重跑即自适应。
+            -- clangd_drivers.lua return 一个 glob 字符串 (如 /opt/.../aarch64-mix210-linux-*,/bin/cc)。
+            '--query-driver=' .. require('custom.clangd_drivers'),
           },
           filetypes = { 'c', 'cc', 'cpp', 'objc', 'objcpp' },
-          root_dir = require('lspconfig.util').root_pattern('compile_commands.json', 'compile_flags.txt', '.git'),
+          -- .clangd 优先: sdc_solution 与 industrial_code_reader 仓根各有 .clangd,
+          -- icr 仓根的 .clangd 作隔离边界 (不指 cc), 避免 icr 源文件误套 sdc_solution 的交叉编译表。
+          -- compile_commands.json 作 fallback (仓根软链接指向合并总表)。
+          root_dir = require('lspconfig.util').root_pattern('.clangd', 'compile_commands.json', 'compile_flags.txt', '.git'),
         },
         neocmake = {
           cmd = { 'neocmakelsp', '--stdio' },

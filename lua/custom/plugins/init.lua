@@ -59,7 +59,7 @@ end
 
 -- neo-tree gY/gU：生成本机 Windows OpenSSH 可粘贴的 scp 命令
 -- 填本机 ssh 能连上的目标，例如: 'zhiwei@myserver' 或 SSH config 里的 Host 别名
--- vim.g.neotree_scp_target = 'user@host'
+vim.g.neotree_scp_target = 'ThinkStation'
 
 
 -- 使用 treesitter 进行折叠
