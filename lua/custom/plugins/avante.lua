@@ -50,6 +50,55 @@ return {
         end,
       },
     },
+    -- 主对话 / agent：DeepSeek V4 Flash，启用 Thinking（思考不显示在对话框中）
+    deepseek = {
+        __inherited_from = 'openai',
+        endpoint = 'https://api.deepseek.com',
+        api_key_name = 'DEEPSEEK_API_KEY',
+        model = 'deepseek-v4-flash',
+        timeout = 120000,
+        extra_request_body = {
+            max_tokens = 16384,
+            thinking = { type = 'enabled' },
+        },
+        -- 覆盖 openai provider 的 add_thinking_message：
+        -- 思考内容仍会保留在 API 上下文中（保证多轮 tool call 的思维连贯性），
+        -- 但通过 visible = false 让历史消息渲染层跳过显示 "🤔 Thought content:" 块。
+        add_thinking_message = function(_, ctx, text, state, opts)
+            if ctx.reasoning_content == nil then
+                ctx.reasoning_content = ''
+            end
+            ctx.reasoning_content = ctx.reasoning_content .. text
+            local msg = require('avante.history.message'):new('assistant', {
+                type = 'thinking',
+                thinking = ctx.reasoning_content,
+                signature = '',
+            }, {
+                state = state,
+                uuid = ctx.reasoning_content_uuid,
+                turn_id = ctx.turn_id,
+                visible = false,
+            })
+            ctx.reasoning_content_uuid = msg.uuid
+            if opts.on_messages_add then
+                opts.on_messages_add({ msg })
+            end
+        end,
+    },
+    -- 自动补全：Flash + Non-Thinking，禁用 tools
+    deepseek_flash = {
+        __inherited_from = 'openai',
+        endpoint = 'https://api.deepseek.com',
+        api_key_name = 'DEEPSEEK_API_KEY',
+        model = 'deepseek-v4-flash',
+        timeout = 8000,
+        disable_tools = true,
+        extra_request_body = {
+            temperature = 0,
+            max_tokens = 512,
+            thinking = { type = 'disabled' },
+        },
+    }
   },
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
   build = 'make',
