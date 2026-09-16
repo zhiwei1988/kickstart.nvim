@@ -14,6 +14,11 @@ return {
     behaviour = {
       auto_suggestions = true,
     },
+    -- native provider 在上游误把 vim.ui.input 改成 vim.ui.select，
+    -- 会与 telescope-ui-select 冲突；API key 输入也需要 conceal。
+    input = {
+      provider = 'dressing',
+    },
     providers = {
       -- 主对话 / agent：DeepSeek V4 Flash，启用 Thinking（思考不显示在对话框中）
       deepseek = {
