@@ -2,7 +2,7 @@ return {
   'yetone/avante.nvim',
   event = 'VeryLazy',
   lazy = false,
-  version = false, -- set this if you want to always pull the latest change
+  -- 版本由 lazy-lock.json 锁定；需要升级时再 :Lazy update avante.nvim
   opts = {
     mode = 'agentic',
     provider = 'deepseek',

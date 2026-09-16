@@ -342,7 +342,7 @@ require('lazy').setup({
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
-    branch = '*',
+    branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
@@ -964,6 +964,8 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    -- 不写 branch 时 lazy 会跟本地 origin/HEAD；该指针仍指向已冻结的 master
+    branch = 'main',
     build = ':TSUpdate',
     config = function()
       ---@diagnostic disable-next-line: missing-fields
@@ -999,6 +1001,10 @@ require('lazy').setup({
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   { import = 'custom.plugins' },
 }, {
+  -- 启动只补装缺失插件，不升级已有插件。版本以 lazy-lock.json 为准。
+  install = { missing = true },
+  -- 不自动检查更新，避免一打开 :Lazy 就想按 U。
+  checker = { enabled = false, notify = false },
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
