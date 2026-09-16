@@ -62,12 +62,8 @@ end
 -- vim.g.neotree_scp_target = 'user@host'
 
 
--- 使用 treesitter 进行折叠
-vim.wo.foldmethod = 'expr'
-vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
-
--- 默认不折叠
-vim.wo.foldlevel = 99
+-- 使用 Neovim 内置 treesitter 折叠；具体 foldmethod/foldexpr 在 FileType 时按 buffer 启用
+vim.opt.foldlevel = 99
 
 -- 自动保存设置
 vim.opt.autowrite = true     -- 在切换缓冲区时自动保存

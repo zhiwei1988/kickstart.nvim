@@ -746,6 +746,7 @@ require('lazy').setup({
         'codelldb', -- Used to code debug
         'neocmakelsp', -- Used to auto complete cmake
         'clang-format', -- Used to format C/C++ code
+        'tree-sitter-cli', -- nvim-treesitter main 编译 parser 需要
       })
       -- 依赖 npm 的工具，只有检测到 npm 才加入安装列表，避免无 node 环境时反复报错
       if vim.fn.executable 'npm' == 1 then
@@ -966,15 +967,67 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     -- 不写 branch 时 lazy 会跟本地 origin/HEAD；该指针仍指向已冻结的 master
     branch = 'main',
+    lazy = false,
     build = ':TSUpdate',
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('nvim-treesitter').setup {
-        ensure_installed = { 'bash', 'c', 'cpp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-        auto_install = true,
-        highlight = { enable = true },
-        indent = { enable = true },
-      }
+      -- main 分支的 setup() 只认 install_dir，高亮/缩进/安装都要自己接
+      local parsers = { 'bash', 'c', 'cpp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local missing = {}
+      for _, lang in ipairs(parsers) do
+        if not vim.treesitter.language.add(lang) then
+          missing[#missing + 1] = lang
+        end
+      end
+      if #missing > 0 then
+        require('nvim-treesitter').install(missing)
+      end
+
+      ---@param buf integer
+      ---@param language string
+      local function treesitter_try_attach(buf, language)
+        if not vim.treesitter.language.add(language) then
+          return
+        end
+        if not vim.api.nvim_buf_is_valid(buf) then
+          return
+        end
+
+        vim.treesitter.start(buf, language)
+
+        for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+          vim.wo[win][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+          vim.wo[win][0].foldmethod = 'expr'
+        end
+
+        if vim.treesitter.query.get(language, 'indents') ~= nil then
+          vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
+      end
+
+      local available_parsers = require('nvim-treesitter').get_available()
+      vim.api.nvim_create_autocmd('FileType', {
+        group = vim.api.nvim_create_augroup('nvim-treesitter-attach', { clear = true }),
+        callback = function(args)
+          local buf, filetype = args.buf, args.match
+          local language = vim.treesitter.language.get_lang(filetype)
+          if not language then
+            return
+          end
+
+          -- 插件目录里的旧 .so 也能被 language.add 找到，不必重复安装
+          if vim.treesitter.language.add(language) then
+            treesitter_try_attach(buf, language)
+            return
+          end
+
+          if vim.list_contains(available_parsers, language) then
+            -- 打开未安装 parser 的文件时自动安装（按 commit 下载，不再依赖 master 分支名）
+            require('nvim-treesitter').install(language):await(function()
+              treesitter_try_attach(buf, language)
+            end)
+          end
+        end,
+      })
     end,
   },
 
