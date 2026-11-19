@@ -659,7 +659,7 @@ require('lazy').setup({
             -- 交叉编译器白名单: 让 clangd 调用真实 gcc 探测内置宏与系统 include (aarch64/arm/x86 等)。
             -- 白名单由 scripts/gen_lsp_compdb.sh 扫描 compile_commands.json 动态生成, 换产品重跑即自适应。
             -- clangd_drivers.lua return 一个 glob 字符串 (如 /opt/.../aarch64-mix210-linux-*,/bin/cc)。
-            '--query-driver=' .. require('custom.clangd_drivers'),
+            '--query-driver=' .. require 'custom.clangd_drivers',
           },
           filetypes = { 'c', 'cc', 'cpp', 'objc', 'objcpp' },
           -- .clangd 优先: sdc_solution 与 industrial_code_reader 仓根各有 .clangd,
@@ -1027,6 +1027,11 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
+}, {
+  -- 新设备按 lazy-lock.json 锁定的 commit 安装, 不自动检查/更新插件。
+  -- 升级统一走手动 :Lazy update, 确认后连同 lazy-lock.json 一起提交。
+  checker = { enabled = false },
+  change_detection = { enabled = false },
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
