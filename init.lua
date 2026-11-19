@@ -1077,6 +1077,11 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
+}, {
+  -- 新设备按 lazy-lock.json 锁定的 commit 安装, 不自动检查/更新插件。
+  -- 升级统一走手动 :Lazy update, 确认后连同 lazy-lock.json 一起提交。
+  checker = { enabled = false },
+  change_detection = { enabled = false },
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
